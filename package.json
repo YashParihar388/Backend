@@ -1,0 +1,21 @@
+{
+  "name": "chai",
+  "version": "1.0.0",
+  "description": "Backend practise",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Rishi",
+    "Code",
+    "Nerd"
+  ],
+  "author": "Rishi",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.11",
+    "prettier": "^3.6.2"
+  }
+}
