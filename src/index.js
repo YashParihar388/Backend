@@ -9,6 +9,8 @@ import express from 'express'
 dotenv.config({path : './'})
 
 
+const app = express();
+
 
 connectDb()
 .then(app.listen(process.env.PORT || 3000),()=>{

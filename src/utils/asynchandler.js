@@ -1,6 +1,6 @@
 const asynchandler = (handler) =>{
     (req,res,next)=>{
-        Promise.resolve(handler(req,res)).catch((err)=>next(err))
+       return  Promise.resolve(handler(req,res)).catch((err)=>next(err))
     }
 }
 //    OR
