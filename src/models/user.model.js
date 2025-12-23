@@ -3,6 +3,7 @@ import mongooseAggregatePaginate from 'mongoose-aggregate-paginate-v2';
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken';
 
+
 const userSchema = new Schema({
     username:{
         type:String,
@@ -28,7 +29,7 @@ const userSchema = new Schema({
         type:String,
         required:true
     },
-    coverimage:{
+    coverImage:{
         type:String
     },
     watchhistory:[{
@@ -46,10 +47,10 @@ const userSchema = new Schema({
 
 
 
-userSchema.pre("save",async function(next){
-    if(!this.isModified("password")) return next();
+userSchema.pre("save",async function(){
+    if(!this.isModified("password")) return ;
     this.password=await bcrypt.hash(this.password,10);
-    next()
+    
 })
 
 userSchema.methods.isPasswordCorrect=async function(password){
