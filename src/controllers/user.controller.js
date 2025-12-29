@@ -40,7 +40,7 @@ const registerUser = asynchandler(async (req,res) => {
 
     //storing user
     const existuser = await User.findOne({
-        $or: [{username},{password}]
+        $or: [{username},{email}]
     })
     //check if user is in database or not 
     if(existuser){
@@ -92,7 +92,7 @@ const registerUser = asynchandler(async (req,res) => {
 const loginUser = asynchandler(async(req,res) =>{
     const {username,password,email} = req.body;
 
-    if(!username || !email){
+    if(!username && !email){
         throw new apierror(404,"please provide username or email");
     }
 
@@ -112,12 +112,12 @@ const loginUser = asynchandler(async(req,res) =>{
 
     const {RefreshToken,AccessToken} = await generateAccessToken(user._id);
 
-    const loggedinuser = User.findById(user._id).select("-password -RefreshToken");
+    const loggedinuser = await User.findById(user._id).select("-password -RefreshToken");
 
 
     const options={
         httpOnly:true,
-        secure:true
+        secure:false
     }
 
     return res.status(200).
@@ -137,10 +137,10 @@ const loginUser = asynchandler(async(req,res) =>{
 })
 
 const logoutUser = asynchandler(async(req,res) =>{
-    User.findByIdAndUpdate(
+    await User.findByIdAndUpdate(
         req.user._id,{
             $set:{
-                RefresRefreshToken:undefined
+                RefreshToken: undefined
             }
         },{
             new:true
@@ -148,7 +148,7 @@ const logoutUser = asynchandler(async(req,res) =>{
 
         const options={
             httpOnly:true,
-            secure:true
+            secure:false
         }
 
         return res.status(200)
