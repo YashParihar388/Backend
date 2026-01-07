@@ -35,5 +35,5 @@ export const verifyJWT = asynchandler(async(req,__dirname,next) =>{
     
 })
 
-export {verifyJWT}
+
 
