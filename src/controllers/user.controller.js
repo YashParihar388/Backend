@@ -192,7 +192,108 @@ const refreshAccessToken = asynchandler(async (req,res) =>{
     .json(new ApiResponse(200,{AccessToken,RefreshToken:newRefreshToken},"Access Token Refreshed"))
 })
 
+const updatePassword = asynchandler(async(req,res) =>{
+    const {oldPassword,newPassword} = req.body;
+
+    const user = await User.findById(req.user?._id);
+
+    const isPasswordCorrect = await user.isPasswordCorrect(oldPassword)
+
+    if(!isPasswordCorrect){
+        throw new apierror("incorrect password")
+    }
+
+    user.password=newPassword
+
+    await user.save({validateBeforeSave:true})
+
+
+    return res.status(200)
+    .json(ApiResponse(200,{},"password changed successfully"))
+
+})
+
+const getCurrentuser = asynchandler(async(req,res)=>{
+    return res.status(200).json(200,req.user,"user fetched")
+})
+
+const updateAccountDetails=asynchandler(async(req,res)=>{
+    const {email,fullname} = req.body
+    if(!fullname || !email){
+        throw new apierror("please enter all feilds")
+    }
+    User.findByIdAndUpdate(req.user?._id,{
+        $set:{
+            fullName,
+            email: email
+        },
+        
+    },{new:true}).select("-password")
+
+    return res.status(200).json(ApiResponse(200,user,"account updated successfully"))
+
+    
+})
+
+const updateAvatarImage = asynchandler(async(req,res)=>{
+    const avatarImage = req.file?.path
+
+    if(!avatarImage){
+        throw new apierror(400,"Cannot find avatar image")
+    }
+
+    const avatar = await uploadOnCloudinary(avatarImage)
+
+    if(!avatar){
+        throw new apierror(400,"avatar file missing")
+    }
+
+    const user =User.findByIdAndUpdate(req.user._id,{
+        $set:{
+            avatar:avatar.url
+        }
+    },{new:true}).select("-password")
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(200, user, "Avatar image updated successfully")
+    )
+})
+
+const updateCoverImage = asynchandler(async(req,res)=>{
+    const CoverImage = req.file?.path
+
+    if(!CoverImage){
+        throw new apierror(400,"Cannot find avatar image")
+    }
+
+    const cover = await uploadOnCloudinary(avatarImage)
+
+    if(!cover){
+        throw new apierror(400,"cover file missing")
+    }
+
+    const user =User.findByIdAndUpdate(req.user._id,{
+        $set:{
+            cover:cover.url
+        }
+    },{new:true}).select("-password")
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(200, user, "Avatar image updated successfully")
+    )
+})
 
 
 
-export {registerUser,loginUser,logoutUser,refreshAccessToken};
+
+export {registerUser,
+    loginUser,
+    logoutUser,
+    refreshAccessToken,
+    updatePassword,
+    getCurrentuser,
+    updateAccountDetails,updateAvatarImage,updateCoverImage};
